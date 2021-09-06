@@ -2,6 +2,7 @@
  * Tom Bielawski
  * React.Tac.Toe game
  * 7/29/2021
+ * Collaborating Dev: Jesse Johns
  * */
 
 //import statements
@@ -12,14 +13,8 @@ import Square from "./components/Square";
 import {Patterns} from "./patterns";
 
 
-/* change spinner
-* make notification for current player turn
-* replace x, o, with images
-* */
-
 //Main App function
-function App()
-{
+function App() {
 
     //Declare initial state, init with 9 empty strings: one for each square
     const [board, setBoard] = useState(["","","","","","","","","",]);
@@ -28,64 +23,41 @@ function App()
     const [player, setPlayer] = useState("O");
 
     //Declare result state, init with object for winner and status
-    const [result, setResult] = useState({winner: "Waiting", status: "..." });
-
+    const [result, setResult] = useState({winner: "Waiting for a winner", status: "..." });
 
     //useEffect hook() to update with every change, calls chooseWinner()
-    useEffect(() =>
-    {
-
+    useEffect(() => {
             //call chooseWinner
             chooseWinner();
             //call checkForATie
             checkForATie();
 
             //After setting the board above,
-            //If current player is X
-            if (player === "X")
-            {
-                //Make the current player O
-                setPlayer("O");
-            }
+            //If current player is X, Make the current player O
+            if (player === "X") { setPlayer("O"); }
 
             //Else, make the current player X
-            else
-            {
-                setPlayer("X");
-            }
+            else { setPlayer("X"); }
 
         //dependency to prevent endless updates
     }, [ board]);
 
 
     //useEffect called after every move
-    useEffect((event) =>
-    {
-        //Check if first render of the page so alert doesnt happen incorrectly
-        if (result.state !== "none")
-        {
+    useEffect((event) => {
 
-            //Display results in an alert window
-            //alert(`Game over!!! The winner is: ${result.winner}`);
+        //Restart the game, invoke startOver()
+        if (result.state !== "none") { startOver();}
 
-            //Restart the game, invoke startOver()
-            startOver();
-        }
-
-        //Dependency to prevent endless calls
-    }, [result]);
-
+    }, []);
 
     //Square chooser function (rename after complete), pass in square index
-    const chooseSquare = (square) =>
-    {
+    const chooseSquare = (square) => {
         //Set the board, map over squares, find the value of each square
-        setBoard(board.map((value, index) =>
-        {
+        setBoard(board.map((value, index) => {
             //If square == index, & value is empty, change square's initially empty state to current player
             //This prevents player from choosing more than one square
-            if (index === square && value === "")
-            {
+            if (index === square && value === "") {
                 return player;
             }
 
@@ -97,12 +69,10 @@ function App()
 
     // Choose winner function, called each time a move is made.
     // No parameters
-    const chooseWinner = () =>
-    {
+    const chooseWinner = () => {
         //Loop through the patterns
         //For each pattern in the array
-        Patterns.forEach((currentPattern) =>
-        {
+        Patterns.forEach((currentPattern) => {
             //Set the current player
             const firstPlayer = board[currentPattern[0]];
 
@@ -114,22 +84,16 @@ function App()
 
             //Compare the patterns
             //For each index in the current pattern
-            currentPattern.forEach((index) =>
-            {
+            currentPattern.forEach((index) => {
                 //If board at current index != firstPlayer
-                if (board[index] !== firstPlayer)
-                {
+                if (board[index] !== firstPlayer) {
                     //The winning pattern is false, no winner yet
                     foundWinningPattern = false;
                 }
-
-                // //Otherwise,
-                // else {foundWinningPattern === true;}
             });
 
             //If the winning pattern is found
-            if (foundWinningPattern === true)
-            {
+            if (foundWinningPattern === true) {
                 //Declare the winner and assign to object
                 setResult({winner: player, status: " is the winner!!"})
             }
@@ -137,34 +101,29 @@ function App()
     };
 
     //Check for a time
-    const checkForATie = () =>
-    {
+    const checkForATie = () => {
         //Declare bool to represent a full board
         let boardIsFilled = true;
 
         //Loop over board
         //For each square on the board...
-        board.forEach((square) =>
-        {
+        board.forEach((square) => {
             //if a square is empty
-            if (square === "")
-            {
+            if (square === "") {
                 //Board is not filled
                 boardIsFilled = false;
             }
         });
 
         //If there is a tie
-        if (boardIsFilled)
-        {
+        if (boardIsFilled) {
             //Set the result and display
             setResult({winner: "Two losers!", status: "It's a tie!"});
         }
     };
 
     //startOver function to restart game, no params
-    const startOver = () =>
-    {
+    const startOver = () => {
         //return board to initial state
         setBoard(["","","","","","","","","",]);
 
